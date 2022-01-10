@@ -1,3 +1,5 @@
+import { Api } from "../api/Api";
+
 const SET_THEME_COLOR = 'SET-THEME-COLOR';
 const SET_USERS_ON_PAGE = 'SET-USERS-ON-PAGE';
 const UPDATE_SEARCH_INPUT_TEXT = 'UPDATE-SEARCH-INPUT-TEXT';
@@ -145,4 +147,102 @@ export const setPageNumberActionCreator = (pageNumber) => {
         pageNumber: pageNumber
     }
 }
+
+
+
+
+export const getAllUsersThunkCreator = (usersOnPage) => {
+    return (
+        (dispatch) => {
+            Api.getAllUsers()
+                .then(data => {
+                    dispatch(setAllUsersActionCreator(data))
+                    let pages = Math.ceil(data.length / usersOnPage)
+                    dispatch(setTotalPagesCountActionCreator(pages))
+                })
+        }
+    )
+}
+export const getUsersByPageNumberAndUsersOnPageFromApiThunkCreator = (pageNumber, usersOnPage) => {
+    return (
+        (dispatch) => {
+            Api
+            .getUsersByPageNumber(pageNumber, usersOnPage)
+            .then(data => {
+                // let pages = Math.ceil(allUsers.length / usersOnPage)
+                // dispatch(setTotalPagesCountActionCreator(pages));
+                // dispatch(setPageNumberActionCreator(1));
+                dispatch(setActualUsersActionCreator(data))
+
+            })
+        }
+    )   
+} 
+export const searchUsersByNameThunkCreator = (userName, usersOnPage, foundedUsers) => {
+ 
+    return (
+  
+        (dispatch) => {
+                    Api.searchUserByName(userName)
+                        .then(data => {
+                    
+                            if(data.length > 0)
+                            {                          
+                                dispatch(setFoundedUsersActionCreator(data))
+                                dispatch(setPageNumberActionCreator(1))
+
+                                let sortedFoundedUsersByUsersOnPage = [];
+        
+                            if(usersOnPage > data.length)
+                            {
+                                let currentUsersOnPage = data.length
+                                    for (let index = 0 ; index < currentUsersOnPage; index++) {
+                                        sortedFoundedUsersByUsersOnPage.push(data[index]);   
+                                    }    
+                            }
+                            else
+                            {
+                                for (let index = 0 ; index < usersOnPage ; index++) {
+                                        sortedFoundedUsersByUsersOnPage.push(data[index]);   
+                                    }
+                            }
+                                let pages = Math.ceil(data.length / usersOnPage);
+                                dispatch(setTotalPagesCountActionCreator(pages));
+                                dispatch(setActualUsersActionCreator(sortedFoundedUsersByUsersOnPage))
+                            }
+                        })
+        }
+    )
+}
+export const getUserByIdThunkCreator = (userId) => {
+    return (
+        (dispatch) => {
+            Api.getUser(userId)
+            .then(data => {
+                    dispatch(setUserNameByIdActionCreator(data.name))
+                })
+        }
+    )
+}
+export const getUsersByPageNumberAndUsersOnPageFromFoundedUsersThunkCreator = (foundedUsers, pageNumber, usersOnPage) => {
+    return (
+        (dispatch) => {
+            let sortedFoundedUsersByUsersOnPage = [];
+
+                for (let index = ((pageNumber * usersOnPage) - usersOnPage) ; index < (pageNumber * usersOnPage) && index < foundedUsers.length ; index++) {
+                    sortedFoundedUsersByUsersOnPage.push(foundedUsers[index]);   
+                }
+
+            dispatch(setActualUsersActionCreator(sortedFoundedUsersByUsersOnPage))
+        }
+    )
+}
+            
+
+
+
+
+
+
+
 export default usersReducer;

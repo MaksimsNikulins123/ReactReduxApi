@@ -5,15 +5,13 @@ import moon from '../../assets/moon.svg';
 
 
 const Header = (props) => {
-// debugger
+
 let themeColor = props.themeColor;
 
 let onChangeSelectValue = (e) => {
-    // debugger
+
     let usersOnPage = e.target.value;
-    props.setUsersOnPage(usersOnPage);
-    props.foundedUsers.length > 0 ? props.getActualFoundedUsers(usersOnPage) : props.getActualUsers(usersOnPage);
-    
+    props.getActualUsers(usersOnPage)
 
 }
     return (

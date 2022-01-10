@@ -1,14 +1,16 @@
 
 
 const Users = (props) => {
-    // debugger;
+   
     let themeColor = props.themeColor;
-    
-    let actualUsersArray = props.actualUsers;
+
+    let actualUsersArray = props.actualUsers
+  
 
     let getUserId = (e) => {
-        let id = e.target.id;
-        props.getUserNameById(id); 
+        let userId = e.target.id;
+        
+        props.getUserNameById(userId); 
     
     }
   

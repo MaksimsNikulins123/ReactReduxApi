@@ -1,52 +1,29 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Api } from "../../api/Api";
-import { setActualUsersActionCreator, setPageNumberActionCreator } from "../../redux/users-reducer";
+import { 
+    getUsersByPageNumberAndUsersOnPageFromApiThunkCreator, 
+    getUsersByPageNumberAndUsersOnPageFromFoundedUsersThunkCreator, 
+    setActualUsersActionCreator, 
+    setPageNumberActionCreator 
+} from "../../redux/users-reducer";
 import Pagination from "./Pagination";
 
 
 class PaginationClass extends React.Component {
 
 
-    getUsersByPageNumber = (pageNumber) => {
-        // debugger
-        return(
-            Api.getUsersByPageNumber(pageNumber, this.props.usersOnPage)
-            .then(data => {
-                this.props.setActualUsers(data)
-            })
-        )
-    }
+    getPageNumber = (pageNumber) => {
+        this.props.setPageNumber(pageNumber)
 
-    getFoundedUsersByPageNumber = (pageNumber) => {
-        // debugger
-        let usersOnPage = this.props.usersOnPage
-        let foundedUsers = this.props.foundedUsers
-        let sortedFoundedUsersByUsersOnPage = [];
-
-        if(usersOnPage > foundedUsers.length)
+        if(this.props.foundedUsers.length > 0)
         {
-            usersOnPage = foundedUsers.length
-
-            for (let index = ((pageNumber * usersOnPage) - usersOnPage) ; index < (pageNumber * usersOnPage); index++) {
-                sortedFoundedUsersByUsersOnPage.push(foundedUsers[index]);   
-            }
-            
+            this.props.getUsersByPageNumberAndUsersOnPageFromFoundedUsers(this.props.foundedUsers, pageNumber, this.props.usersOnPage)
         }
         else
         {
-            for (let index = ((pageNumber * usersOnPage) - usersOnPage) ; index < (pageNumber * usersOnPage) && index < foundedUsers.length; index++) {
-                sortedFoundedUsersByUsersOnPage.push(foundedUsers[index]);   
-            }
-        }
-        
-
-        
-
-        this.props.setActualUsers(sortedFoundedUsersByUsersOnPage)
-
+            this.props.getUsersByPageNumberAndUsersOnPageFromApi(pageNumber, this.props.usersOnPage)
+        }   
     }
-    
 
     render() {
    
@@ -55,10 +32,8 @@ class PaginationClass extends React.Component {
             themeColor={this.props.themeColor}
             totalPagesCount={this.props.totalPagesCount}
             pageNumber={this.props.pageNumber}
-            setPageNumber={this.props.setPageNumber}
-            foundedUsers={this.props.foundedUsers}
-            getUsersByPageNumber={this.getUsersByPageNumber}
-            getFoundedUsersByPageNumber={this.getFoundedUsersByPageNumber}
+
+            getPageNumber={this.getPageNumber}
             />
         ) 
     }
@@ -79,6 +54,10 @@ let mapDispatchToProps = (dispatch) => {
     return {
         setPageNumber: (pageNumber) => {dispatch(setPageNumberActionCreator(pageNumber))},
         setActualUsers: (data) => {dispatch(setActualUsersActionCreator(data))},
+        getUsersByPageNumberAndUsersOnPageFromFoundedUsers: (foundedUsers, pageNumber, usersOnPage) => 
+            {dispatch(getUsersByPageNumberAndUsersOnPageFromFoundedUsersThunkCreator(foundedUsers, pageNumber, usersOnPage))},
+        getUsersByPageNumberAndUsersOnPageFromApi: (pageNumber, usersOnPage) => 
+            {dispatch(getUsersByPageNumberAndUsersOnPageFromApiThunkCreator(pageNumber, usersOnPage))}
     }
 }
 

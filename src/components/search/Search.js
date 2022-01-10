@@ -6,14 +6,13 @@ const Search = (props) => {
 
     let onChangePostValue = (e) => {
         let text = e.target.value;
-        props.updateSearchInputText(text);  
+        props.getSearchInputText(text)
+        // props.updateSearchInputText(text);  
     }
 
     let findUsersByName = (e) => {
-        // debugger
         if(e.key === 'Enter'){
-            props.getUsersByName(newInputElement)
-            // props.foundedUsers.length > 0 ? props.getActualFoundedUsers(usersOnPage) : props.getActualUsers(usersOnPage);  
+           props.getUsersByName(newInputElement);
         }
     }
 
